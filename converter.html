@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>Simple Data Converter</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  textarea { width: 95%; height: 150px; margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; }
+  button { padding: 10px 15px; cursor: pointer; }
+  select { padding: 10px; margin-right: 10px; }
+</style>
+</head>
+<body>
+
+<h1>Simple Data Converter</h1>
+<p>This tool converts data between JSON and plain text formats.</p>
+
+<div>
+  <label for="format-from">From:</label>
+  <select id="format-from">
+    <option value="json">JSON</option>
+    <option value="text">Plain Text</option>
+  </select>
+
+  <label for="format-to">To:</label>
+  <select id="format-to">
+    <option value="text">Plain Text</option>
+    <option value="json">JSON</option>
+  </select>
+</div>
+
+<textarea id="input-data" placeholder="Paste your data here..."></textarea>
+<textarea id="output-data" readonly placeholder="Converted data will appear here..."></textarea>
+
+<button onclick="convertData()">Convert</button>
+
+<script>
+  function convertData() {
+    const inputData = document.getElementById('input-data').value;
+    const formatFrom = document.getElementById('format-from').value;
+    const formatTo = document.getElementById('format-to').value;
+    let outputData = '';
+
+    if (formatFrom === formatTo) {
+      outputData = inputData; // No conversion needed
+    } else if (formatFrom === 'json' && formatTo === 'text') {
+      try {
+        const jsonData = JSON.parse(inputData);
+        // Simple conversion: join object values with newlines
+        if (typeof jsonData === 'object' && jsonData !== null) {
+          outputData = Object.values(jsonData).join('\n');
+        } else {
+          outputData = String(jsonData); // Handle primitive JSON values
+        }
+      } catch (e) {
+        outputData = 'Error: Invalid JSON input.';
+      }
+    } else if (formatFrom === 'text' && formatTo === 'json') {
+      // Simple conversion: create a JSON object with a single 'lines' key
+      const lines = inputData.split('\n');
+      outputData = JSON.stringify({ lines: lines }, null, 2);
+    }
+
+    document.getElementById('output-data').value = outputData;
+  }
+</script>
+
+</body>
+</html>
